@@ -3,7 +3,7 @@ package com.denisgithuku.fooddeliveryapp.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val LightRed = Color(0xFFFB5D5E)
-val LightGray = Color(0xFFF1F1F2)
+val LightGray = Color(0xFFFCFBFF)
 val WhiteSmoke = Color(0xFFD8E2DC)
 val DarkerGray = Color(0xFFE9E9E9)
 val White = Color(0xFFFFFFFF)

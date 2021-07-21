@@ -10,8 +10,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            HomeScreen()
+            App()
         }
+    }
+
+
+    @Composable
+    fun App() {
+        HomeScreen()
     }
 
 
@@ -20,6 +26,6 @@ class MainActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun HomeScreenPreview() {
-        HomeScreen()
+        App()
     }
 }

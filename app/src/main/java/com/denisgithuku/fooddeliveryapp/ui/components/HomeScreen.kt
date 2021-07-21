@@ -16,32 +16,49 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.denisgithuku.fooddeliveryapp.R
 import com.denisgithuku.fooddeliveryapp.ui.theme.FoodDeliveryAppTheme
 import com.denisgithuku.fooddeliveryapp.ui.theme.PopularFood
 
+
 @Composable
 fun HomeScreen() {
+
+    val scaffoldState = rememberScaffoldState()
+    val currentScreen = remember { mutableStateOf<Screen>(Screen.Home) }
+
     FoodDeliveryAppTheme {
         Surface(color = MaterialTheme.colors.primary) {
             Scaffold(
+                scaffoldState = scaffoldState,
                 topBar = {
                     CustomTopAppBar()
+                },
+                bottomBar = {
+                    CustomBottomNavigationBar(currentScreenId = currentScreen.value.id) {
+                        currentScreen.value = it
+                    }
                 }
             ) { innerPadding ->
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
-                        .padding(horizontal = 20.dp)
-                ) {
+                        .padding(10.dp)
+                )
+                {
                     QuerySection()
                     FoodTypeGridSection()
                     GuideSection()
@@ -52,29 +69,6 @@ fun HomeScreen() {
     }
 }
 
-
-@Composable
-fun CustomTopAppBar() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 15.dp)
-    ) {
-        Column {
-            IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(50.dp)) {
-                Icon(painter = painterResource(id = R.drawable.grid), tint = Color.Black.copy(alpha = .6f), contentDescription = null)
-            }
-        }
-
-        Column {
-            IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(50.dp)) {
-                Icon(painter = painterResource(id = R.drawable.search), tint = Color.Black.copy(alpha = .6f), contentDescription = null)
-            }
-        }
-    }
-}
 
 @Composable
 fun QuerySection() {
@@ -97,7 +91,7 @@ fun QuerySection() {
 @Composable
 fun FoodTypeGridSection() {
     val frequentFoodList = listOf(
-        FoodItem(R.drawable.hotdog, "Hotdog"),
+        FoodItem(R.drawable.hotdog, "Burgers"),
         FoodItem(R.drawable.fries, "Fries"),
         FoodItem(R.drawable.fruits, "Fruits"),
         FoodItem(R.drawable.rice, "Rice")
@@ -112,46 +106,44 @@ fun FoodTypeGridSection() {
     ) {
         items(frequentFoodList.size) { frequentFoodItem ->
             Card(
+                elevation = 0.dp,
+                shape = RoundedCornerShape(22.dp),
                 modifier = Modifier
                     .padding(4.dp)
+                    .fillMaxWidth()
                     .clickable { }
-                    .fillMaxWidth(),
-                elevation = 4.dp,
-                shape = RoundedCornerShape(8.dp)
+                ,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
-                        .padding(vertical = 6.dp, horizontal = 4.dp)
+                        .padding(12.dp)
                         .fillMaxWidth()
                 ) {
-                    Column {
-                        Box(
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .clip(shape = RoundedCornerShape(12.dp))
-                                .size(60.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(id = frequentFoodList[frequentFoodItem].foodImage),
-                                contentDescription = null,
-                                contentScale = ContentScale.Fit
-                            )
-                        }
+                    Column(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(60.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = frequentFoodList[frequentFoodItem].foodImage),
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit
+                        )
                     }
-                    Column(modifier = Modifier.padding(10.dp)) {
+                    Column {
                         Text(
                             text = frequentFoodList[frequentFoodItem].foodName,
                             color = Color.Black.copy(alpha = .7f),
-                            style = MaterialTheme.typography.h2
+                            style = TextStyle(fontSize = 16.sp)
                         )
                     }
                 }
             }
         }
-
     }
+
 }
 
 
@@ -203,43 +195,47 @@ fun PopularFoodSection() {
         state = listState
     ) {
         items(foodList.size) { foodItem ->
-            Card(modifier = Modifier
-                .padding(end = 4.dp),
-            shape = RoundedCornerShape(18.dp)) {
-                Column(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth()
-                ) {
+            Card(
+                modifier = Modifier
+                    .padding(end = 4.dp),
+                elevation = 0.dp,
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Column(Modifier.padding(10.dp)) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
+                        modifier = Modifier.fillMaxWidth()
+                            .align(Alignment.CenterHorizontally)
+                            .padding(vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Text(
                             text = foodList[foodItem].foodName,
-                            style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.SemiBold)
+                            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .size(70.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .padding(8.dp)
+                            .clip(CircleShape)
+                    ) {
+                        Image(
+                            painter = painterResource(id = foodList[foodItem].foodImage),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop
                         )
                     }
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceAround,
-                        modifier = Modifier.fillMaxWidth()) {
-                            Column(
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .padding(8.dp)
-                                    .clip(CircleShape)
-                                    .fillMaxWidth()
-                            ) {
-                                Image(
-                                    painter = painterResource(id = foodList[foodItem].foodImage),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-                    }
-                    Row(modifier = Modifier.padding(vertical = 12.dp, horizontal = 10.dp)) {
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(vertical = 12.dp, horizontal = 10.dp)
+                            .fillMaxWidth()
+                    ) {
                         Column {
                             Icon(
                                 imageVector = Icons.Default.Info,
@@ -250,7 +246,7 @@ fun PopularFoodSection() {
                         Column(modifier = Modifier.padding(start = 8.dp)) {
                             Text(
                                 text = "${foodList[foodItem].calories} Calories",
-                                color = Color.Yellow.copy(alpha = .8f),
+                                color = Color.Black.copy(alpha = .8f),
                                 style = MaterialTheme.typography.caption
                             )
                         }
@@ -260,35 +256,39 @@ fun PopularFoodSection() {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
-                            .padding(vertical = 12.dp, horizontal = 10.dp)
                             .fillMaxWidth()
                     ) {
-                        Column {
                             Text(
                                 text = foodList[foodItem].foodPrice,
                                 color = Color.Black,
-                                style = MaterialTheme.typography.h2.copy(fontWeight = FontWeight.SemiBold)
+                                style = TextStyle(
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 12.sp
+                                )
                             )
-                        }
-                        Column {
-                            Box(modifier = Modifier
-                                .clip(RoundedCornerShape(14.dp))
-                                .clickable { }
-                                .background(color = MaterialTheme.colors.onSurface)
-                                .padding(8.dp)
-                                .size(20.dp)
-                            ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Add,
-                                        contentDescription = null,
-                                        tint = Color.White
-                                    )
-                            }
+                        Box(modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(color = MaterialTheme.colors.onSurface)
+                            .padding(6.dp)
+                            .clickable {  }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Add,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
                         }
                     }
                 }
             }
         }
-    }
 
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun AppPreview() {
+    HomeScreen()
 }
